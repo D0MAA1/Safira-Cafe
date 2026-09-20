@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="book.css" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -46,7 +47,17 @@
       <p class="intro-detail">Every cup begins with a considered<br>detail and ends in a softer day.</p>
     </section>
 
-    <div id="menu-root" aria-live="polite"></div>
+    <section class="menu-book" aria-label="Safira digital menu book">
+      <div class="book-caption"><span>Safira cafe</span><span id="book-status">01 / 05</span></div>
+      <div class="book-shell">
+        <div id="menu-root" class="book-pages" aria-live="polite"></div>
+      </div>
+      <div class="book-controls" aria-label="Menu page controls">
+        <button class="book-button" id="previous-page" type="button" aria-label="Previous menu page"><span>←</span> Previous</button>
+        <p>Turn the page <i>✦</i></p>
+        <button class="book-button" id="next-page" type="button" aria-label="Next menu page">Next <span>→</span></button>
+      </div>
+    </section>
 
     <section class="social-section">
       <p class="eyebrow">Find your way back</p>

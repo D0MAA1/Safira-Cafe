@@ -31,9 +31,41 @@ const featureTemplate = ([name, description, price, image]) => `<figure class="f
 const itemTemplate = ([name, description, price]) => `<article class="menu-item"><h3>${name}</h3><b>${price}</b><p>${description}</p></article>`;
 root.innerHTML = menuData.map(section => `<section class="menu-section ${section.className}" id="${section.id}"><div class="section-head"><span class="section-index">${section.number} / 05</span><h2 class="section-title">${section.name}</h2><p class="section-note">${section.accent}</p></div><div class="feature-grid">${section.features.map(featureTemplate).join('')}</div><div class="menu-list">${section.items.map(itemTemplate).join('')}</div></section>`).join('');
 
+const bookPages = [...root.querySelectorAll('.menu-section')];
+const bookStatus = document.querySelector('#book-status');
+const previousPage = document.querySelector('#previous-page');
+const nextPage = document.querySelector('#next-page');
+let activePage = 0;
+
+function showPage(index, direction = 'next') {
+  activePage = (index + bookPages.length) % bookPages.length;
+  root.dataset.turn = direction;
+  bookPages.forEach((page, pageIndex) => {
+    page.classList.toggle('book-page-active', pageIndex === activePage);
+    if (pageIndex === activePage) page.classList.add('is-visible');
+  });
+  bookStatus.textContent = `${String(activePage + 1).padStart(2, '0')} / ${String(bookPages.length).padStart(2, '0')}`;
+  previousPage.disabled = false;
+  nextPage.disabled = false;
+}
+
+showPage(0);
+previousPage.addEventListener('click', () => showPage(activePage - 1, 'previous'));
+nextPage.addEventListener('click', () => showPage(activePage + 1, 'next'));
+
+document.querySelectorAll('.desktop-nav a, .mobile-nav a').forEach(link => link.addEventListener('click', event => {
+  const targetId = link.getAttribute('href').slice(1);
+  const targetIndex = bookPages.findIndex(page => page.id === targetId);
+  if (targetIndex >= 0) {
+    event.preventDefault();
+    showPage(targetIndex, targetIndex > activePage ? 'next' : 'previous');
+    document.querySelector('.menu-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}));
+
 const menuButton = document.querySelector('.menu-toggle');
 const mobileNav = document.querySelector('.mobile-nav');
 menuButton.addEventListener('click', () => { const open = mobileNav.classList.toggle('open'); menuButton.classList.toggle('active', open); menuButton.setAttribute('aria-expanded', open); menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); });
 mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { mobileNav.classList.remove('open'); menuButton.classList.remove('active'); menuButton.setAttribute('aria-expanded', 'false'); }));
 const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: .12 });
-document.querySelectorAll('.menu-section').forEach(section => observer.observe(section));
+bookPages.forEach(section => observer.observe(section));
